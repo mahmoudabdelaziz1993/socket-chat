@@ -42,11 +42,19 @@ io.on('connection', function(socket){
 
   	callback()
 
-  })
+  });
 
   socket.on('createMessage',function(msg,callback){
-  	io.emit('newMessage',msg);
-  	callback();
+  	var user = users.getUser(socket.id);
+  	if (user) {
+  		io.to(user.room).emit('newMessage',{
+  			from:user.name,
+  			text:msg.text
+  		});
+  	    callback();
+  	}
+  	// io.emit('newMessage',msg);
+  	// callback();
   })
   socket.on('disconnect', function(){
     console.log('user disconnected');
